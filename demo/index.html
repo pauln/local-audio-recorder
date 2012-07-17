@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Local Audio Recorder: Demo</title>
+	<script type="text/javascript" src="./swfobject.js"></script>
+	<script type="text/javascript">
+		function audioReceived(filename, filedata) {
+			filedata = window.atob(filedata);
+			var container = document.getElementById('audio_container');
+			var link = document.createElement('a');
+			var audio = document.createElement('audio');
+			var BB = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder;
+			var WU = window.URL || window.webkitURL;
+			var bb = new BB();
+			
+			// Extract raw data from Base64-encoded string
+			var ar = new Uint8Array(filedata.length);
+			for(var i=0;i<filedata.length;++i) {
+				ar[i] = filedata.charCodeAt(i);
+			}
+
+			// Put audio data into blob builder and set up <audio> tag
+			bb.append(ar.buffer);
+			audio.src = WU.createObjectURL(bb.getBlob('audio/x-wav'));
+			audio.controls = true;
+
+			container.innerHTML = '';
+			link.href = audio.src;
+			link.appendChild(document.createTextNode('Download this recording'));
+			link.download = filename;
+			container.appendChild(audio);
+			container.appendChild(document.createElement('br'));
+			container.appendChild(document.createElement('br'));
+			container.appendChild(link);
+		}
+
+		flashvars = {gateway:'form', callback:'audioReceived', format:'wav'};
+		swfobject.embedSWF("../build/recorder.swf", "recorder", "215", "138", "10.1", "./expressInstall.swf", flashvars);
+	</script>
+</head>
+<body>
+	<h1>Local Audio Recorder</h1>
+	<h2>Basic JS Callback Demo</h2>
+	<p>
+		This is a basic demonstration of using a JavaScript callback to perform client-side processing on recorded audio.  Once you record an audio clip and "upload" it, an HTML5 <span style="font-family:monospace;background-color:#ccc;">audio</span> tag will be added below the recorder to allow you to play it back.  If your browser supports the <span style="font-family:monospace;background-color:#ccc;">download</span> attribute on links, the link below the player will trigger a download - otherwise, it'll simply link to the audio file.
+	<div class="repository_recordaudio_wrapper">
+	    <div id="recorder">
+	        <p><a href="http://www.adobe.com/go/getflashplayer"><img src="http://www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player" /></a></p>
+	    </div>
+	</div>
+	<div id="audio_container">
+		Once you have made a recording, this text will be replaced with an audio player.
+	</div>
+</body>
+</html>
