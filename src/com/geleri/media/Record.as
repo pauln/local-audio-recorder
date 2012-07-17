@@ -47,6 +47,7 @@ public class Record extends Sprite{
 	private var _httpParams:Object = new Object();
 	private var _fieldName:String = "newfile";
 	private var _filename:String;
+	private var _filetype:String = ".mp3";
 	private var _soundCompleteHandler:Function;
 	private var _progressBar:ProgressBar;
 	private var _mp3Encoder:ShineMP3Encoder;
@@ -80,6 +81,10 @@ public class Record extends Sprite{
 	public function setHttpParam(key:String, val:String):void
 	{
 		_httpParams[key] = val;
+	}
+	public function setFileType(filetype:String):void
+	{
+		_filetype = filetype;
 	}
 	public function startRecording():void
 	{
@@ -201,6 +206,13 @@ public class Record extends Sprite{
 		wavWriter.samplingRate = 44100;
 		wavWriter.processSamples(formattedSound, soundData, 44100, 1); // convert our ByteArray to a WAV file.
 		
+		if(_filetype == '.wav') {
+			// No conversion to MP3 necessary - WAV requested
+			mp3Data = formattedSound;
+			_mp3Ready();
+			return;
+		}
+		
 		// Convert WAV file to MP3
 		formattedSound.position = 0;
 		_mp3Encoder = new ShineMP3Encoder(formattedSound);
@@ -228,7 +240,7 @@ public class Record extends Sprite{
 		// If defined, use JS callback instead of doing our own HTTP POST
 		if(_postUrl=="form" && _jsCallback.length) {
 			var encoded:String = Base64.encodeByteArray(mp3Data);
-			ExternalInterface.call(_jsCallback, _filename+".mp3", encoded);
+			ExternalInterface.call(_jsCallback, _filename+_filetype, encoded);
 			return;
 		}
 		
@@ -241,7 +253,7 @@ public class Record extends Sprite{
 		urlRequest.url = _postUrl;
 		urlRequest.contentType = 'multipart/form-data; boundary=' + UploadPostHelper.getBoundary();
 		urlRequest.method = URLRequestMethod.POST;
-		urlRequest.data = UploadPostHelper.getPostData(_fieldName, _filename+".mp3", mp3Data, _httpParams);
+		urlRequest.data = UploadPostHelper.getPostData(_fieldName, _filename+_filetype, mp3Data, _httpParams);
 		urlRequest.requestHeaders.push( new URLRequestHeader( 'Cache-Control', 'no-cache' ) );
 		// Load in browser window
 		navigateToURL(urlRequest, "_self");
