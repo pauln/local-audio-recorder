@@ -15,7 +15,7 @@ A local audio recorder (no streaming server required).  Currently requires Flash
 * Force a specific filename if desired
 
 ####Live demo
-There is a [basic demonstration](http://maxthrax.github.com/local-audio-recorder/demo/) of using the Local Audio Recorder with a JavaScript callback.
+There is a [basic demonstration](http://pauln.github.io/local-audio-recorder/demo/) of using the Local Audio Recorder with a JavaScript callback.
 This demo requires a browser which supports JavaScript, the HTML5 audio element and Typed Arrays.
 
 ####Options
