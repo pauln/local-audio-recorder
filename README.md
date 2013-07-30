@@ -17,3 +17,13 @@ A local audio recorder (no streaming server required).  Currently requires Flash
 ####Live demo
 There is a [basic demonstration](http://maxthrax.github.com/local-audio-recorder/demo/) of using the Local Audio Recorder with a JavaScript callback.
 This demo requires a browser which supports JavaScript, the HTML5 audio element and Typed Arrays.
+
+####Options
+The following are the standard options, specified as flashvars.
+Any additional parameters passed as flashvars will be added to the POST request as extra fields, with names and values as per the flasvars.
+* `gateway`: URL to send POST request to, or "form" to use a JavaScript callback.
+* `filefield`: Name of the field to upload the file under, if local-audio-recorder is handling the POST request for you.
+* `callback`: JavaScript callback; takes two parameters: the file name and the file data.
+* `filename`: Default file name.
+* `forcename`: If this parameter is specified (with any value), the file name provided in the "filename" field will be enforced.
+* `format`: Output format.  Set to "wav" to have local-audio-recorder produce a WAV file; otherwise it will default to MP3.
