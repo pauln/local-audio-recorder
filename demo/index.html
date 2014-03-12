@@ -9,9 +9,8 @@
 			var container = document.getElementById('audio_container');
 			var link = document.createElement('a');
 			var audio = document.createElement('audio');
-			var BB = window.BlobBuilder || window.WebKitBlobBuilder || window.MozBlobBuilder;
 			var WU = window.URL || window.webkitURL;
-			var bb = new BB();
+			var blob;
 			
 			// Extract raw data from Base64-encoded string
 			var ar = new Uint8Array(filedata.length);
@@ -19,9 +18,9 @@
 				ar[i] = filedata.charCodeAt(i);
 			}
 
-			// Put audio data into blob builder and set up <audio> tag
-			bb.append(ar.buffer);
-			audio.src = WU.createObjectURL(bb.getBlob('audio/x-wav'));
+			// Put audio data into a blob and set up <audio> tag
+			blob = new Blob([ar], {type:'audio/x-wav'});
+			audio.src = WU.createObjectURL(blob);
 			audio.controls = true;
 
 			container.innerHTML = '';
