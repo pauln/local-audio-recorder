@@ -254,7 +254,6 @@ public class Record extends Sprite{
 		urlRequest.contentType = 'multipart/form-data; boundary=' + UploadPostHelper.getBoundary();
 		urlRequest.method = URLRequestMethod.POST;
 		urlRequest.data = UploadPostHelper.getPostData(_fieldName, _filename+_filetype, mp3Data, _httpParams);
-		urlRequest.requestHeaders.push( new URLRequestHeader( 'Cache-Control', 'no-cache' ) );
 		// Load in browser window
 		navigateToURL(urlRequest, "_self");
 	}
