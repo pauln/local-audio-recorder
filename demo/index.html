@@ -39,7 +39,7 @@
 			wrap.innerHTML = recorderHTML;
 		}
 
-		flashvars = {gateway:'form', callback:'audioReceived', format:'wav'};
+		flashvars = {gateway:'form', 'return':'reset', callback:'audioReceived', format:'wav'};
 		swfobject.embedSWF("../build/recorder.swf", "recorder", "215", "138", "10.1", "./expressInstall.swf", flashvars);
 	</script>
 </head>

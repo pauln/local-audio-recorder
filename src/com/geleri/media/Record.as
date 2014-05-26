@@ -43,21 +43,24 @@ public class Record extends Sprite{
 	public var channel:SoundChannel;
 	
 	private var _postUrl:String;
+	private var _returnUrl:String;
 	private var _jsCallback:String = "";
 	private var _httpParams:Object = new Object();
 	private var _fieldName:String = "newfile";
 	private var _filename:String;
 	private var _filetype:String = ".mp3";
 	private var _soundCompleteHandler:Function;
+	private var _reset:Function;
 	private var _progressBar:ProgressBar;
 	private var _mp3Encoder:ShineMP3Encoder;
 	private var _mp3Ready:Function;
 	private var _filenameRegex:RegExp = /[?\/\\]/g;
 	
-	public function Record(extraSoundCompleteHandler:Function=null)
+	public function Record(extraSoundCompleteHandler:Function=null, reset:Function=null)
 	{
 		init();
 		_soundCompleteHandler = extraSoundCompleteHandler;
+		_reset = reset;
 	}
 	public function init():void
 	{
@@ -69,6 +72,10 @@ public class Record extends Sprite{
 	public function setPostUrl(addr:String):void
 	{
 		_postUrl = addr;
+	}
+	public function setReturnUrl(addr:String):void
+	{
+		_returnUrl = addr;
 	}
 	public function setCallback(jsFunc:String):void
 	{
@@ -241,21 +248,30 @@ public class Record extends Sprite{
 		if(_postUrl=="form" && _jsCallback.length) {
 			var encoded:String = Base64.encodeByteArray(mp3Data);
 			ExternalInterface.call(_jsCallback, _filename+_filetype, encoded);
+			if (_returnUrl == 'reset') {
+				_reset();
+			}
 			return;
 		}
 		
-		// POST the completed MP3 back to Moodle in the existing browser window
-		/*var parameters:Object = new Object();
-		parameters.sesskey = _sesskey;
-		parameters.id = _cmid;
-		parameters.save = "Upload this file";*/
+		// Upload the recording.
 		var urlRequest:URLRequest = new URLRequest();
 		urlRequest.url = _postUrl;
-		urlRequest.contentType = 'multipart/form-data; boundary=' + UploadPostHelper.getBoundary();
 		urlRequest.method = URLRequestMethod.POST;
-		urlRequest.data = UploadPostHelper.getPostData(_fieldName, _filename+_filetype, mp3Data, _httpParams);
-		// Load in browser window
-		navigateToURL(urlRequest, "_self");
+		urlRequest.data = UploadPostHelper.getPostData(_fieldName, _filename+_filetype, mp3Data, _httpParams);//postData;
+		urlRequest.contentType = 'multipart/form-data; boundary=' + UploadPostHelper.getBoundary();
+	
+		var urlLoader:URLLoader = new URLLoader(urlRequest);
+		urlLoader.addEventListener(Event.COMPLETE, loaderCompleteHandler);
+		urlLoader.load(urlRequest);
+	}
+	private function loaderCompleteHandler(event:Event):void {
+		if (_returnUrl != null && _returnUrl != 'reset') {
+			navigateToURL(new URLRequest(_returnUrl), '_self');
+		} else {
+			// Reset recorder state to allow for another recording.
+			_reset();
+		}
 	}
 	
 	// HTTP error catching etc
