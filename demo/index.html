@@ -32,11 +32,6 @@
 			container.appendChild(document.createElement('br'));
 			container.appendChild(document.createElement('br'));
 			container.appendChild(link);
-
-			// Reset recorder so you can make another recording
-			recorderHTML = wrap.innerHTML;
-			wrap.innerHTML = "";
-			wrap.innerHTML = recorderHTML;
 		}
 
 		flashvars = {gateway:'form', 'return':'reset', callback:'audioReceived', format:'wav'};
